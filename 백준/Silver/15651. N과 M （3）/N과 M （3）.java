@@ -7,36 +7,33 @@ class Main {
 
     static int N;
     static int M;
+    static StringBuilder sb = new StringBuilder();
     
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
         StringTokenizer st = new StringTokenizer(br.readLine());
 
         N = Integer.parseInt(st.nextToken());
         M = Integer.parseInt(st.nextToken());
 
-        recursive(0, new int[M], bw);
+        recursive(0, new int[M]);
 
-        bw.flush();
-        bw.close();
+        System.out.println(sb);
     }
 
-    public static void recursive(int idx, int[] sel, BufferedWriter bw) throws Exception {
+    public static void recursive(int idx, int[] sel) {
         if (idx == sel.length) {
-            StringBuilder sb = new StringBuilder();
             for (int i=0; i<idx; ++i) {
                 sb.append(sel[i]);
                 sb.append(" ");
             }
-            //System.out.println();
-            bw.write(sb + "\n");
+            sb.append("\n");
             return;
         }
 
         for (int i=1; i<=N; ++i) {
             sel[idx] = i;
-            recursive(idx+1, sel, bw);
+            recursive(idx+1, sel);
         }
     }
 }
