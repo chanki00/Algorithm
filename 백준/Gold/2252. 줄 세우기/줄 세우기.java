@@ -19,11 +19,6 @@ public class Main {
 			this.n = n;
 			this.d = d;
 		}
-		
-//		@Override
-//		public int compareTo(Node o) {
-//			return Integer.compare(this.d, o.d);
-//		}
 	}
 	
 	static List<List<Integer>> graph;
