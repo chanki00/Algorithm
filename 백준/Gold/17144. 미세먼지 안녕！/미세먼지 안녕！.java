@@ -1,223 +1,147 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
-import java.lang.*;
-import java.io.*;
-
-/*
-R*C, map[r][c] = 미세먼지 양 / (1, 1) ~ (R, C)
-공기청정기 위치 = map[r][1]~map[r+1][1] (2칸 차지)
-
-아래 일이 1초마다 순서대로 일어난다.
-1. 미세먼지 확산 -> 모든 미세먼지 칸에서 동시에
-- (r, c) 인접 4방향 확산
-- 인접한 곳에 공청기 있으면 확산 X
-- 환산되는 양은 map[r][c] / 5, 소수점 버림
-- 기존 영역에 남아있는 양은 map[r][c] - (map[r][c] / 5)
-2. 공청기 작동
-- 위는 반시계 아래는 시계 방향 순환
-- 바람이 불면 미세먼지가 바람 방향대로 한 칸씩 이동
-
-T초 뒤에 상황은?
-*/
 
 public class Main {
+	static int fresh_r[];
+	static int result;
+	static int dr[]= {-1,0,1,0};
+	static int dc[]= {0,1,0,-1};
+	static int dr2[]= {1,0,-1,0};
+	static int dc2[]= {0,1,0,-1};
+	static int R,C,T;
+	static int[][] map;
+	static int[][] map2;
+	public static void main(String[] args) throws IOException {
+		BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st=new StringTokenizer(br.readLine());
+		R=Integer.parseInt(st.nextToken());
+		C=Integer.parseInt(st.nextToken());
+		T=Integer.parseInt(st.nextToken());
+		fresh_r=new int[2];
+		map=new int[R][C];
+		map2=new int[R][C];
+		for (int i = 0; i < R; i++) {
+			st=new StringTokenizer(br.readLine());
+			for (int j = 0; j < C; j++) {
+				map[i][j]=Integer.parseInt(st.nextToken());
+			}
+		}
+		
+		for (int t = 0; t < T; t++) {
+			int cnt=0;
+			for (int i = 0; i < R; i++) {
+				for (int j = 0; j < C; j++) {
+					if(map[i][j]==-1){
+						fresh_r[cnt]=i;
+						cnt++;
+					}
+					if(map[i][j]>=1)
+						dust(i,j);
+				}
+			}
 
-    static class AirCleaner {
-        int r;
-        int c;
-        AirCleaner(int r, int c) {
-            this.r = r;
-            this.c = c;
-        }
-    }
+			//공기청정기 배치
+			map2[fresh_r[0]][0]=-1;
+			map2[fresh_r[1]][0]=-1;
+			
+			clean_up(fresh_r[0],0);
+			clean_down(fresh_r[1],0);
 
-    static class Dust {
-        int r;
-        int c;
-        int w;
-        Dust(int r, int c, int w) {
-            this.r = r;
-            this.c = c;
-            this.w = w;
-        }
-    }
+			result=cal();
+			
+			copy();
+			map2=new int[R][C];
+		}
+		System.out.println(result);
 
-    static int[][] map;
-    static boolean[][] isDust;
-    static List<AirCleaner> airs;
-    
-    public static void main(String[] args) throws Exception {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
-
-        int R = Integer.parseInt(st.nextToken());
-        int C = Integer.parseInt(st.nextToken());
-        int T = Integer.parseInt(st.nextToken());
-
-        airs = new ArrayList<>();
-        
-        map = new int[R][C];
-        isDust = new boolean[R][C];
-        
-        for (int i=0; i<R; ++i) {
-            st = new StringTokenizer(br.readLine());
-            for (int j=0; j<C; ++j) {
-                map[i][j] = Integer.parseInt(st.nextToken());
-                if (map[i][j] == -1) {
-                    airs.add(new AirCleaner(i, j));
-                }
-                else if (map[i][j] > 0) {
-                    isDust[i][j] = true;
-                }
-            }
-        }
-
-        for (int t=0; t<T; ++t) {
-            // 1. 확산
-            spread();
-//            print();
-//            System.out.println();
-            // 2. 공청기 작동
-            operate();
-//            print();
-//            System.out.println("-----------------------");
-        }
-
-        System.out.println(getResult());
-
-        
-    }
-
-    public static void print() {
-        for (int i=0; i<map.length; ++i) {
-            System.out.println(Arrays.toString(map[i]));
-        }
-    }
-
-    public static int getResult() {
-        int count = 0;
-        for (int i=0; i<map.length; ++i) {
-            for (int j=0; j<map[i].length; ++j) {
-                if (isDust[i][j]) {
-                    count += map[i][j];
-                }
-            }
-        }
-
-        return count;
-    }
-
-    public static void spread() {
-        int[] dr = {0, 1, 0, -1};
-        int[] dc = {1, 0, -1, 0};
-        int[][] fix = new int[map.length][map[0].length];
-        
-        for (int r=0; r<map.length; ++r) {
-            for (int c=0; c<map[r].length; ++c) {
-                if (isDust[r][c]) {
-                    int gap = 0;
-                    for (int d=0; d<4; ++d) {
-                        int nextR = r + dr[d];
-                        int nextC = c + dc[d];
-                        if (isValid(nextR, nextC) && map[nextR][nextC] != -1) {
-                            // map[nextR][nextC] += (map[r][c]/5);
-                            // map[r][c] -= (map[r][c]/5);
-                            gap += (map[r][c]/5);
-                            fix[nextR][nextC] += (map[r][c]/5);
-                        }
-                    }
-                    // map[r][c] -= gap;
-                    fix[r][c] -= gap;
-                }
-            }
-        }
-
-        for (int r=0; r<map.length; ++r) {
-            for (int c=0; c<map[r].length; ++c) {
-                map[r][c] += fix[r][c];
-                if (map[r][c] > 0) {
-                    isDust[r][c] = true;
-                }
-            }
-        }
-    }
-
-    public static void operate() {
-        int[] upDr = {-1, 0, 1, 0};
-        int[] downDr = {1, 0, -1, 0};
-        int[] dc = {0, 1, 0, -1};
-        
-        int upR = airs.get(0).r;
-        int upC = airs.get(0).c;
-        
-        int idx = upR == 0 ? 1 : 0;
-        int currR = upR;
-        int currC = upC;
-        int nextR = upR + upDr[idx];
-        int nextC = upC + dc[idx];
-        
-        while (!(nextR == upR && nextC == upC)) {
-        	if (map[nextR][nextC] > 0) {
-	        	if (map[currR][currC] == -1) {
-	        		map[nextR][nextC] = 0;
-	        		isDust[nextR][nextC] = false;
-	        	}
-	        	
-	        	else {
-	        		map[currR][currC] = map[nextR][nextC];
-	        		isDust[currR][currC] = true;
-	        		map[nextR][nextC] = 0;
-	        		isDust[nextR][nextC] = false;
-	        	}
-        	}
-        	
-        	if (!isValid(nextR+upDr[idx], nextC+dc[idx]) || (nextR+upDr[idx]) > upR) {
-        		idx = (idx + 1) % 4;
-        	}
-        	
-        	currR = nextR;
-        	currC = nextC;
-        	nextR += upDr[idx];
-        	nextC += dc[idx];
-        }
-        
-        
-        
-        int downR = airs.get(1).r;
-        int downC = airs.get(1).c;
-        
-        idx = downR == 0 ? 1 : 0;
-        currR = downR;
-        currC = downC;
-        nextR = downR + downDr[idx];
-        nextC = downC + dc[idx];
-        
-        while (!(nextR == downR && nextC == downC)) {
-        	if (map[nextR][nextC] > 0) {
-	        	if (map[currR][currC] == -1) {
-	        		map[nextR][nextC] = 0;
-	        		isDust[nextR][nextC] = false;
-	        	}
-	        	
-	        	else {
-	        		map[currR][currC] = map[nextR][nextC];
-	        		isDust[currR][currC] = true;
-	        		map[nextR][nextC] = 0;
-	        		isDust[nextR][nextC] = false;
-	        	}
-        	}
-        	
-        	if (!isValid(nextR+downDr[idx], nextC+dc[idx]) || (nextR+downDr[idx]) < downR) {
-        		idx = (idx + 1) % 4;
-        	}
-        	
-        	currR = nextR;
-        	currC = nextC;
-        	nextR += downDr[idx];
-        	nextC += dc[idx];
-        }
-    }
-    
-    public static boolean isValid(int r, int c) {
-        return r >= 0 && r < map.length && c >= 0 && c < map[r].length;
-    }
+	}
+	static void clean_down(int r,int c) {
+		int dir=0;
+		int nr=0,nc=0;
+		while(true) {
+			if(nr==fresh_r[1]&&nc==0) break;
+			if(r+dr2[dir]<fresh_r[1]||c+dc2[dir]>=C||r+dr2[dir]>=R||c+dc2[dir]<0) {
+				dir++;
+			}
+			dir%=4;
+			nr=r+dr2[dir];
+			nc=c+dc2[dir];
+			
+			map2[r][c]=map2[nr][nc];
+			
+			r=r+dr2[dir];
+			c=c+dc2[dir];
+			
+		}
+		map2[fresh_r[1]][1]=0;
+		map2[fresh_r[1]][0]=-1;
+	}
+	static void clean_up(int r,int c) {
+		int dir=0;
+		int nr=0,nc=0;
+		while(true) {
+			if(nr==fresh_r[0]&&nc==0) break;
+			if(r+dr[dir]>fresh_r[0]||c+dc[dir]>=C||r+dr[dir]<0||c+dc[dir]<0) {
+				dir++;
+			}
+			dir%=4;
+			nr=r+dr[dir];
+			nc=c+dc[dir];
+			
+			map2[r][c]=map2[nr][nc];
+			
+			r=r+dr[dir];
+			c=c+dc[dir];
+			
+		}
+		map2[fresh_r[0]][1]=0;
+		map2[fresh_r[0]][0]=-1;
+	}
+	
+	static void dust(int r,int c) {
+		int cnt=0;
+		for (int i = 0; i < 4; i++) {
+			int nr=r+dr[i];
+			int nc=c+dc[i];
+			//범위 초과 및 공기청정기 존재
+			if(nr<0||nc<0||nr>=R||nc>=C||map[nr][nc]==-1) continue;
+			
+			map2[nr][nc]+=map[r][c]/5;
+			cnt++;
+		}
+		map2[r][c]+=map[r][c]-(map[r][c]/5)*cnt;
+	}
+	
+	
+	
+	static void print() {
+		for (int i = 0; i < R; i++) {
+			for (int j = 0; j < C; j++) {
+				System.out.print(map2[i][j]+" ");
+			}
+			System.out.println();
+		}
+		System.out.println();
+	}
+	
+	static void copy() {
+		for (int i = 0; i < R; i++) {
+			for (int j = 0; j < C; j++) {
+				map[i][j]=map2[i][j];
+			}
+		}
+	}
+	
+	static int cal() {
+		int tmp=0;
+		for (int i = 0; i < R; i++) {
+			for (int j = 0; j < C; j++) {
+				if(map2[i][j]<=0) continue;
+				tmp+=map2[i][j];
+			}
+		}
+		return tmp;
+	}
 }
