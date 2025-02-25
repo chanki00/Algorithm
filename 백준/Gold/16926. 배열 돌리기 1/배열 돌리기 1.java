@@ -1,78 +1,78 @@
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.StringTokenizer;
 
 public class Main {
-	static int dr[]= {1,0,-1,0};
-	static int dc[]= {0,1,0,-1};
-	static int N,M,R;
-	static int[][] map;
-	static int[][] map2;
-	public static void main(String[] args) throws IOException {
-		BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
-		StringTokenizer st=new StringTokenizer(br.readLine());
-		N=Integer.parseInt(st.nextToken());
-		M=Integer.parseInt(st.nextToken());
-		R=Integer.parseInt(st.nextToken());
-		map=new int[N][M];
-		map2=new int[N][M];
-		for (int i = 0; i < N; i++) {
-			st=new StringTokenizer(br.readLine());
-			for (int j = 0; j < M; j++) {
-				map[i][j]=Integer.parseInt(st.nextToken());
-				map2[i][j]=map[i][j];
-			}
-		}
-		
-		
 
-		
-		for (int k = 0; k < R; k++) {
-			for (int i = 0; i < Math.min(N, M)/2; i++) {
-				rotate(i,i,i);
+	static int[][] arr;
+	static int R;
+
+	public static void main(String[] args) throws Exception {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st = new StringTokenizer(br.readLine());
+
+		int N = Integer.parseInt(st.nextToken());
+		int M = Integer.parseInt(st.nextToken());
+
+		R = Integer.parseInt(st.nextToken());
+
+		arr = new int[N][M];
+
+		for (int i = 0; i < N; ++i) {
+			st = new StringTokenizer(br.readLine());
+			for (int j = 0; j < M; ++j) {
+				arr[i][j] = Integer.parseInt(st.nextToken());
 			}
-			copy();
 		}
-		print();
+
+		for (int gap = 0; gap < (Math.min(N, M) + 1) / 2; ++gap) {
+			 rotate(gap);
+		}
+		
+		StringBuilder sb = new StringBuilder();
+		for (int i=0; i<N; ++i) {
+			for (int j=0; j<M; ++j) {
+				sb.append(arr[i][j]).append(" ");
+			}
+			sb.append("\n");
+		}
+		
+		System.out.println(sb);
 
 	}
-	private static void rotate(int r,int c,int len) {
-		int nr=len,nc=len;
-		int dir=0;
-		//시작 지점 임시저장
-		while(true) {
-			//범위 초과
-			if(r+dr[dir]>=N-len||c+dc[dir]>=M-len||r+dr[dir]<len||c+dc[dir]<len) {
-				dir++;
+
+	public static void rotate(int gap) {
+		int[] dr = { 0, 1, 0, -1 };
+		int[] dc = { 1, 0, -1, 0 };
+
+		int count = 2 * ((arr.length - 2 * gap) + (arr[0].length - 2 * gap) - 2);
+		int total = R % count;
+//		int total = R;
+		
+		for (int t = 0; t < total; ++t) {
+			int idx = 0;
+			int r = gap;
+			int c = gap;
+			int rotateCount = 0;
+			int first = arr[gap][gap];
+			while (rotateCount < count) {
+
+				int nextR = r + dr[idx];
+				int nextC = c + dc[idx];
+				if (nextR < gap || nextR >= arr.length - gap || nextC < gap || nextC >= arr[nextR].length - gap) {
+					idx = (idx+1) % 4;			
+					continue;
+				}
+				
+				arr[r][c] = arr[nextR][nextC];
+				
+				r = nextR;
+				c = nextC;
+
+				++rotateCount;
 			}
-			dir%=4;
-//			System.out.printf("r:  %d c:   %d nr : %d nc : %d",r,c,nr,nc);
-//			System.out.println();
-			nr=r+dr[dir];
-			nc=c+dc[dir];
-			map[nr][nc]=map2[r][c];
-			
-			r=r+dr[dir];
-			c=c+dc[dir];
-			if(nr==len&&nc==len)
-				break;
+			arr[gap+1][gap] = first;
 		}
 	}
-	static void print() {
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < M; j++) {
-				System.out.print(map[i][j]+" ");
-			}
-			System.out.println();
-		}
-		System.out.println();
-	}
-	static void copy() {
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < M; j++) {
-				map2[i][j]=map[i][j];
-			}
-		}
-	}
+
 }
