@@ -1,29 +1,48 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
-public class Main {
+/**
+ * 0 1 2
+ * 3 4 5
+ * 6 7 8
+ */
 
-    public static void main(String[] args) throws Exception {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        int[][] map = new int[9][9];
-        int count = 0;
-        
-        for (int i = 0; i < map.length; ++i) {
+public class Main {
+	
+	static int[][] map;
+	static boolean[][][] used;
+
+	public static void main(String[] args) throws Exception {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		map = new int[9][9];
+		used = new boolean[3][10][10]; // 0은 row 1은 col 2는 3*3		
+		int count = 0;
+		
+		for (int i=0; i<map.length; ++i) {
             String s = br.readLine();
             for (int j = 0; j < map[i].length; ++j) {
                 map[i][j] = s.charAt(j) - '0';
-                if (map[i][j] != 0) {
-                    ++count;
-                }
-            }
-        }
-        
-        dfs(map, 0, 0, count);
-    }
-
-    public static void dfs(int[][] map, int idxR, int idxC, int count) {
-        if (count == map.length * map[0].length) {
+				if (map[i][j] != 0) {
+					++count;
+					used[0][i][map[i][j]] = true;
+					used[1][j][map[i][j]] = true;
+					int idx = getIdx(i, j);
+					used[2][idx][map[i][j]] = true;
+				}
+			}
+		}
+		
+		dfs(0, 0, count);
+	}
+	
+	public static boolean isPossible(int i, int j, int v) {
+		return !used[0][i][v] && !used[1][j][v] && !used[2][getIdx(i, j)][v];
+	}
+	
+	public static void dfs(int idxI, int idxJ, int count) {
+		if (count == map.length * map[0].length) {
             
         	StringBuilder sb = new StringBuilder();
             for (int i=0; i<map.length; ++i) {
@@ -36,108 +55,77 @@ public class Main {
         	
             System.exit(0);
         }
-        
-        if (map[idxR][idxC] == 0) {
-        	for (int v=1; v<10; ++v) {
-                if (verify(map, idxR, idxC, v)) {
-                    map[idxR][idxC] = v;
-                    if (idxC == map[idxR].length-1) {
-                    	dfs(map, idxR+1, 0, count+1);
-                    }
-                    else {
-                    	dfs(map, idxR, idxC+1, count+1);
-                    }
-                    map[idxR][idxC] = 0;
-                }
-            }
-        }
-        else {
-        	if (idxC == map[idxR].length-1) {
-            	dfs(map, idxR+1, 0, count);
-            }
-            else {
-            	dfs(map, idxR, idxC+1, count);
-            }
-        }
-    }
+		
+		if (map[idxI][idxJ] == 0) {
+			for (int v=1; v<10; ++v) {
+		        if (isPossible(idxI, idxJ, v)) {
+		            map[idxI][idxJ] = v;
+	            	used[0][idxI][map[idxI][idxJ]] = true;
+	            	used[1][idxJ][map[idxI][idxJ]] = true;
+	            	int idx = getIdx(idxI, idxJ);
+	            	used[2][idx][map[idxI][idxJ]] = true;
+		            if (idxJ == map[idxI].length-1) {
+		            	dfs(idxI+1, 0, count+1);
+		            }
+		            else {
+		            	dfs(idxI, idxJ+1, count+1);
+		            }
+	            	used[0][idxI][map[idxI][idxJ]] = false;
+	            	used[1][idxJ][map[idxI][idxJ]] = false;
+	            	used[2][idx][map[idxI][idxJ]] = false;
+		            map[idxI][idxJ] = 0;
+		        }
+		    }
+		}
+		else {
+			if (idxJ == map[idxI].length-1) {
+		    	dfs(idxI+1, 0, count);
+		    }
+		    else {
+		    	dfs(idxI, idxJ+1, count);
+		    }
+		}
+	}
+	
+	public static int getIdx(int r, int c) {
+		int idx = 0;
+		
+		if (r >= 0 && r <= 2) {
+			if (c >= 0 && c <= 2) {
+				idx = 0;
+			}
+			else if (c >= 3 && c <= 5) {
+				idx = 1;
+			}
+			else if (c >= 6 && c <= 8) {
+				idx = 2;
+			}
+		}
+		else if (r >= 3 && r <= 5) {
+			if (c >= 0 && c <= 2) {
+				idx = 3;
+			}
+			else if (c >= 3 && c <= 5) {
+				idx = 4;
+			}
+			else if (c >= 6 && c <= 8) {
+				idx = 5;
+			}
+		}
+		else if (r >= 6 && r <= 8) {
+			if (c >= 0 && c <= 2) {
+				idx = 6;
+			}
+			else if (c >= 3 && c <= 5) {
+				idx = 7;
+			}
+			else if (c >= 6 && c <= 8) {
+				idx = 8;
+			}
+		}
+		
+		
+		return idx;
+	}
 
-    public static boolean verify(int[][] map, int r, int c, int v) {
-        return verifyRow(map, r, v) && verifyCol(map, c, v) && verifySquare(map, r, c, v);
-    }
-
-    public static boolean verifyRow(int[][] map, int r, int v) {
-        for (int c=0; c<map[r].length; ++c) {
-            if (map[r][c] == v) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    public static boolean verifyCol(int[][] map, int c, int v) {
-        for (int r=0; r<map.length; ++r) {
-            if (map[r][c] == v) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    public static boolean verifySquare(int[][] map, int r, int c, int v) {
-        int[] idx = getIdx(r, c);
-
-        for (int i = idx[0]; i < idx[0]+3; ++i) {
-            for (int j = idx[1]; j < idx[1]+3; ++j) {
-                if (map[i][j] == v) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
-    public static int[] getIdx(int r, int c) {
-        int[] idx = new int[2];
-        if (r >= 0 && r <= 2) {
-            idx[0] = 0;
-            if (c >= 0 && c <= 2) {
-                idx[1] = 0;
-            }
-            else if (c >= 3 && c <= 5) {
-                idx[1] = 3;
-            }
-            else {
-                idx[1] = 6;
-            }
-        }
-        else if (r >= 3 && r <= 5) {
-            idx[0] = 3;
-            if (c >= 0 && c <= 2) {
-                idx[1] = 0;
-            }
-            else if (c >= 3 && c <= 5) {
-                idx[1] = 3;
-            }
-            else {
-                idx[1] = 6;
-            }
-        }
-        else {
-            idx[0] = 6;
-            if (c >= 0 && c <= 2) {
-                idx[1] = 0;
-            }
-            else if (c >= 3 && c <= 5) {
-                idx[1] = 3;
-            }
-            else {
-                idx[1] = 6;
-            }
-        }
-
-        return idx;
-    }
 }
