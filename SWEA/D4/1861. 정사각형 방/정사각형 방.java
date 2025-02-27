@@ -1,15 +1,13 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.ArrayDeque;
-import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Solution {
-	
 	static int N, max, maxValue;
-	static int[][] map;
+	static int[][] map, dp;
 	static int[] dr = {0, 1, 0, -1};
 	static int[] dc = {1, 0, -1, 0};
+	
 	
 	static class Point {
 		int r;
@@ -26,6 +24,7 @@ public class Solution {
 		for (int t=1; t<=T; ++t) {
 			N = Integer.parseInt(br.readLine());
 			map = new int[N][N];
+			dp = new int[N][N];
 			
 			max = Integer.MIN_VALUE;
 			maxValue = -1;
@@ -39,7 +38,14 @@ public class Solution {
 			
 			for (int i=0; i<N; ++i) {
 				for (int j=0; j<N; ++j) {
-					bfs(i, j);
+					int cnt = recursive(i, j);
+					if (max < cnt) {
+						max = cnt;
+						maxValue = map[i][j];
+					}
+					else if (max == cnt) {
+						maxValue = Math.min(maxValue, map[i][j]);
+					}
 				}
 			}
 			
@@ -49,35 +55,23 @@ public class Solution {
 		}
 	}
 	
-	public static void bfs(int r, int c) {
-		Queue<Point> q = new ArrayDeque<>();
-		q.add(new Point(r, c));
-		boolean[][] visited = new boolean[N][N];
-		visited[r][c] = true;
-		int count = 0;
-		int value = map[r][c];
+	public static int recursive(int r, int c) {
+		if (dp[r][c] != 0) {
+			return dp[r][c];
+		}
 		
-		while (!q.isEmpty()) {
-			Point curr = q.poll();
-			++count;
-			
-			for (int d=0; d<4; ++d) {
-				int nextR = curr.r + dr[d];
-				int nextC = curr.c + dc[d];
-				if (isValid(nextR, nextC) && !visited[nextR][nextC] && map[curr.r][curr.c]+1 == map[nextR][nextC]) {
-					visited[nextR][nextC] = true;
-					q.add(new Point(nextR, nextC));
-				}
+		int count = 1;
+		
+		for (int d=0; d<4; ++d) {
+			int nextR = r + dr[d];
+			int nextC = c + dc[d];
+			if (isValid(nextR, nextC) && map[r][c]+1 == map[nextR][nextC]) {
+				count = 1 + recursive(nextR, nextC);
+				break;
 			}
 		}
 		
-		if (count == max) {
-			maxValue = Math.min(value, maxValue);
-		}
-		else if (count > max) {
-			max = count;
-			maxValue = value;
-		}
+		return dp[r][c] = count;
 	}
 	
 	public static boolean isValid(int r, int c) {
