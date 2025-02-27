@@ -1,66 +1,49 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 
 public class Main {
-
 	static int N, count;
-	static int[][] map;
-	static boolean[][] possible;
-
-	static int[] dr = { 0, 1, 1, 1, 0, -1, -1, -1 };
-	static int[] dc = { 1, 1, 0, -1, -1, -1, 0, 1 };
+	static int[] map;
 
 	public static void main(String[] args) throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		N = Integer.parseInt(br.readLine());
 		count = 0;
 
-		map = new int[N][N];
-		possible = new boolean[N][N];
+		map = new int[N]; // 인덱스는 행 값은 열
 
-		bt(0, 0, 0);
-
+		bt(0);
+		
 		System.out.println(count);
 	}
-
-	public static void bt(int r, int c, int queenCount) {
-
-		if (queenCount == N) {
+	
+	public static void bt(int idx) {
+		if (idx == map.length) {
 			++count;
 			return;
 		}
-
-		if (r == N || c == N) {
-			return;
-		}
-
-		if (map[r][c] == 0) {
-			// 해당 위치에 퀸 놓음
-			fill(r, c, 1);
-			bt(r + 1, 0, queenCount + 1);
-			fill(r, c, -1);
-
-		}
 		
-		// 해당 위치에 퀸 안 놓음
-		bt(r, c+1, queenCount);
-	}
-
-	// flag가 1이면 채우기 -1이면 비우기
-	public static void fill(int r, int c, int flag) {
-		for (int d = 0; d < 8; ++d) {
-			int nextR = r;
-			int nextC = c;
-			while (isValid(nextR, nextC)) {
-				map[nextR][nextC] += flag;
-				nextR += dr[d];
-				nextC += dc[d];
+		for (int c=0; c<map.length; ++c) {
+			map[idx] = c;
+			if (isPossible(idx)) {
+				bt(idx+1);
 			}
 		}
 	}
-
-	public static boolean isValid(int r, int c) {
-		return r >= 0 && r < N && c >= 0 && c < N;
+	
+	public static boolean isPossible(int row) {
+		for (int r=0; r<row; ++r) {
+			// r번째 행과 row에 동일한 열에 놓여져 있는 경우 (r은 row 밑에 있는 행들)
+			if (map[r] == map[row]) {
+				return false;
+			}
+			
+			// 대각선에 있는 경우 -> 행의 차이와 열의 차이가 같을 경우 대각선 상에 존재한다.
+			if (Math.abs(map[r] - map[row]) == Math.abs(r - row)) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 }
