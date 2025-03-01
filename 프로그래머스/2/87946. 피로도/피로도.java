@@ -1,44 +1,49 @@
+import java.util.*;
+import java.io.*;
+/*
+- 최소 필요 피로도(던전 시작을 위한) / 소모 피로도(던전 탐험 끝날 때)
+- 최대한 많이 탐험 -> 현재 피로도 k / [최소][소모]
+*/
 
-
-import java.util.Arrays;
 
 class Solution {
-	static int result;
-	static int num;
+    
+    int max = Integer.MIN_VALUE;
+    boolean[] v;
+    
     public int solution(int k, int[][] dungeons) {
-        num=dungeons.length;
-        result=0;
-        find(new boolean[num],0,new int[num],dungeons,k);
-        return result;
+        int answer = -1;
+        v = new boolean[dungeons.length];
+        recursive(dungeons, new int[dungeons.length], 0, k);
+        answer = max;
+        
+        return answer;
     }
-    static void find(boolean v[],int cnt,int res[],int[][]dungeons,int k) {
-    	if(cnt==num) {
-    		go(res,dungeons,k);
-    		return;
-    	}
-    	
-    	for (int i = 0; i < num; i++) {
-			if(v[i])
-				continue;
-			res[cnt]=i;
-			v[i]=true;
-			find(v,cnt+1,res,dungeons,k);
-			v[i]=false;
-		}
+    
+    public void recursive(int[][] dungeons, int[] sel, int idx, int stamina) {        
+        if (idx == dungeons.length) {
+            chk(dungeons, sel, stamina);
+            return;
+        }
+        
+        for (int i=0; i<dungeons.length; ++i) {
+            if (!v[i]) {
+                v[i] = true;
+                sel[idx] = i;
+                recursive(dungeons, sel, idx+1, stamina);
+                v[i] = false;
+            }
+        }
     }
-
-    static void go(int res[],int [][]dungeons,int k) {
-    	int cnt=0;
-    	int piro=k;
-    	for (int i = 0; i < dungeons.length; i++) {
-			int idx=res[i];
-			if(piro>=dungeons[idx][0]) {
-				piro-=dungeons[idx][1];
-				cnt++;
-			}else {
-				break;
-			}
-		}
-    	if(cnt>result)result=cnt;
+    
+    public void chk(int[][] dungeons, int[] sel, int stamina) {
+        int count = 0;
+        for (int i=0; i<dungeons.length; ++i) {
+            if (stamina >= dungeons[sel[i]][0]) {
+                ++count;
+                stamina -= dungeons[sel[i]][1];
+            }
+        }
+        max = Math.max(max, count);
     }
 }
