@@ -28,21 +28,19 @@ public class Main {
             items[i] = new Item(w, v);
         }
 
-        int[][] dp = new int[N + 1][K + 1];
-        for (int i = 1; i <= N; ++i) {
-            for (int j = 1; j <= K; ++j) {
-                if (items[i].w > j) {
-                    dp[i][j] = dp[i - 1][j];
-                } else {
-                    dp[i][j] = Math.max(dp[i-1][j - items[i].w] + items[i].v, dp[i - 1][j]);
-                }
+        int[] dp = new int[K + 1];
+
+        for (int i=1; i<=N; ++i) {
+            // dp[] 배열은 이전 값의 최대 이득 상태로 초기화된 상태
+            for (int j=K; j>=items[i].w; --j) {
+                // (현재 + 남는 무게의 이전 값 중 최대 이득) vs 그냥 이전 값
+                // dp[j] 자체가 이전 아이템까지 탐색 중 j만큼의 무게로 얻을 수 있는 최댓값임
+                dp[j] = Math.max(items[i].v + dp[j-items[i].w], dp[j]);
             }
         }
 
-//        for (int i = 0; i <= N; ++i) {
-//            System.out.println(Arrays.toString(dp[i]));
-//        }
+//        System.out.println(Arrays.toString(dp));
 
-        System.out.println(dp[N][K]);
+        System.out.println(dp[K]);
     }
 }
