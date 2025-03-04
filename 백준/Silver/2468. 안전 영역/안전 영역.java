@@ -1,80 +1,91 @@
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayDeque;
-import java.util.Queue;
-import java.util.StringTokenizer;
-
+import java.util.*;
+class Man{
+	int r;
+	int c;
+	public Man(int r,int c) {
+		this.r=r;
+		this.c=c;
+	}
+}
 public class Main {
-	
-	static int maxHeight, max;
-	static int[][] map;
-	
-	static class Point {
-		int r;
-		int c;
-		Point(int r, int c) {
-			this.r = r;
-			this.c = c;
-		}
-	}
-	
-	public static void main(String[] args) throws Exception {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		int N = Integer.parseInt(br.readLine());
-		maxHeight = 0;
-		max = 1;
-		
-		map = new int[N][N];
-		for (int i=0; i<N; ++i) {
-			StringTokenizer st = new StringTokenizer(br.readLine());
-			for (int j=0; j<N; ++j) {
-				map[i][j] = Integer.parseInt(st.nextToken());
-				maxHeight = Math.max(maxHeight, map[i][j]);
+	static boolean visited[][];
+	static int dr[]= {-1,0,1,0};
+	static int dc[]= {0,1,0,-1};
+	static int N;
+	static int map[][];
+	static int max_nd;
+	public static void main(String[] args) throws IOException{
+		BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st;
+		N=Integer.parseInt(br.readLine());
+		map=new int[N][N];
+		max_nd=0;
+		int res=0;
+		for (int i = 0; i < N; i++) {
+			st=new StringTokenizer(br.readLine());
+			for (int j = 0; j < N; j++) {
+				map[i][j]=Integer.parseInt(st.nextToken());
+				if(map[i][j]>max_nd) max_nd=map[i][j];
 			}
 		}
 		
-		for (int i=1; i<maxHeight; ++i) {
-			int count = 0;
-			boolean[][] visited = new boolean[map.length][map[0].length];
-			for (int r=0; r<map.length; ++r) {
-				for (int c=0; c<map[r].length; ++c) {
-					if (!visited[r][c] && map[r][c] > i) {
-						bfs(r, c, i, visited);
-						++count;
+		for (int nd = 0; nd <= max_nd; nd++) {
+			visited=new boolean[N][N];
+			int sum=0;
+			for (int i = 0; i < N; i++) {
+				for (int j = 0; j < N; j++) {
+					if(map[i][j]>nd&&!visited[i][j]) {
+						bfs(i,j,nd);
+						sum++;
 					}
+					
 				}
 			}
-			max = Math.max(max, count);
+			if(sum>res)res=sum;
+			//print();
 		}
 		
-		System.out.println(max);
+		
+
+		
+		System.out.println(res);
+		
 	}
 	
-	public static void bfs(int r, int c, int currH, boolean[][] visited) {
-		int[] dr = {0, 1, 0, -1};
-		int[] dc = {1, 0, -1, 0};
+	static void bfs(int r, int c,int nd) {
+		Queue<Man> q=new LinkedList<>();
+		q.add(new Man(r,c));
 		
-		Queue<Point> q = new ArrayDeque<>();
-		q.add(new Point(r, c));
-		visited[r][c] = true;
-		
-		while (!q.isEmpty()) {
-			Point curr = q.poll();
+		while(!q.isEmpty()) {
+			Man now=q.poll();
 			
-			for (int d=0; d<4; ++d) {
-				int nextR = curr.r + dr[d];
-				int nextC = curr.c + dc[d];
+			for (int i = 0; i < 4; i++) {
+				int nr=now.r+dr[i];
+				int nc=now.c+dc[i];
 				
-				if (isValid(nextR, nextC) && !visited[nextR][nextC] && map[nextR][nextC] > currH) {
-					q.add(new Point(nextR, nextC));
-					visited[nextR][nextC] = true;
-				}
+				if(nr>=N||nc>=N||nr<0||nc<0||visited[nr][nc]) continue;
+				if(map[nr][nc]<=nd) continue;
+				
+				visited[nr][nc]=true;
+				q.add(new Man(nr,nc));
 			}
-		}		
+		}
+
+		
 	}
 	
-	public static boolean isValid(int r, int c) {
-		return r >= 0 && r < map.length && c >=0 && c < map[r].length;
+	
+	static void print() {
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) {
+				System.out.print(visited[i][j]+" ");
+			}
+			System.out.println();
+		}
+		System.out.println();
 	}
 
 }
