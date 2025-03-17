@@ -22,7 +22,7 @@ public class Main {
 		
 		Arrays.sort(house);
 		
-		int l = 1;
+		int l = 0;
 		int r = house[N-1] - house[0] + 1;
 	
 		while (l < r) {
