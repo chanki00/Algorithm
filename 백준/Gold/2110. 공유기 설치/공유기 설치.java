@@ -22,14 +22,14 @@ public class Main {
 		
 		Arrays.sort(house);
 		
-		int l = 0;
-		int r = house[N-1] - house[0] + 1;
+		int l = 1;
+		int r = house[N-1] - house[0];
 	
-		while (l < r) {
+		while (l <= r) {
 			int mid = (l+r) / 2;
 			
 			if (chk(mid) < C) {
-				r = mid;
+				r = mid-1;
 			}
 			else {
 				l = mid+1;
