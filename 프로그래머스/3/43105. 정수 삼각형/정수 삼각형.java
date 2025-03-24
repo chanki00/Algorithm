@@ -15,11 +15,6 @@ class Solution {
             }
         }
         
-        // for (int i=0; i<sum.length; ++i) {
-        //     System.out.println(Arrays.toString(sum[i]));
-        // }
-        
-        
         int l = sum.length-1;
         
         for (int i=0; i<sum[l].length; ++i) {
@@ -27,15 +22,5 @@ class Solution {
         }
         
         return answer;
-    }
-    
-    public int getSum(int n) {
-        int sum = 0;
-        
-        for (int i=1; i<=n; ++i) {
-            sum += i;
-        }
-        
-        return sum;
     }
 }
