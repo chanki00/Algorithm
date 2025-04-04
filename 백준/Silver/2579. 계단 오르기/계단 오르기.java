@@ -22,19 +22,18 @@ public class Main {
 
 		max = Integer.MIN_VALUE;
 
-		int[][] memo = new int[N + 1][2];
-		memo[1][0] = 0;
-		memo[1][1] = stairs[1];
+		int[] memo = new int[N+1];
+		
+		memo[1] = stairs[1];
 		if (N > 1) {
-			memo[2][0] = stairs[1];
-			memo[2][1] = stairs[1] + stairs[2];
+			memo[2] = memo[1] + stairs[2];
 		}
+		
 		for (int i = 3; i <= N; ++i) {
-			memo[i][0] = Math.max(memo[i - 1][0], memo[i - 1][1]);
-			memo[i][1] = Math.max(memo[i - 2][1] + stairs[i], memo[i - 3][1] + stairs[i - 1] + stairs[i]);
+			memo[i] = Math.max(memo[i - 2] + stairs[i], memo[i - 3] + stairs[i - 1] + stairs[i]);
 		}
-
-		System.out.println(memo[N][1]);
+		
+		System.out.println(memo[N]);
 
 	}
 
