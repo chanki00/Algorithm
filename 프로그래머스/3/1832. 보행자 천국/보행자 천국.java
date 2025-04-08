@@ -28,20 +28,13 @@ class Solution {
         
         dfs(cityMap, 0, 0, 0, dp);
         
-//         for (int i=0; i<m; ++i) {
-//             for (int j=0; j<n; ++j) {
-//                 System.out.print(Arrays.toString(dp[i][j]));
-//             }
-//             System.out.println();
-//         }
-        
         answer = (dp[0][0][0] % MOD + dp[0][0][1] % MOD) % MOD;
         
         return answer;
     }
     
     public int dfs(int[][] map, int r, int c, int dir, int[][][] dp) {
-        // System.out.println(r + ", " + c + ", " + dir);
+
         
         if (r == map.length-1 && c == map[r].length-1) {
             return 1;
@@ -89,10 +82,10 @@ class Solution {
         }
         
         if (map[r][c] == 2) {
-            return dp[r][c][dir] % MOD;
+            return dp[r][c][dir];
         }
         
-        return (dp[r][c][0] % MOD + dp[r][c][1] % MOD) % MOD;
+        return dp[r][c][0] + dp[r][c][1] % MOD;
     }
     
     public boolean isValid(int[][] map, int r, int c) {
