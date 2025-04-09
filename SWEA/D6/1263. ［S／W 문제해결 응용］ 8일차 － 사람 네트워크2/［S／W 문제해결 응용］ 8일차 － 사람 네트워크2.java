@@ -5,7 +5,7 @@ import java.util.StringTokenizer;
 
 public class Solution {
 	
-	static int INF = 10000000;
+	static int INF = 1000;
 	
 	public static void main(String[] args) throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -32,7 +32,7 @@ public class Solution {
 				}
 			}
 			
-			int min = INF;
+			int min = INF*INF;
 			for (int i=1; i<=N; ++i) {
 				int cc = 0;
 				for (int j=1; j<=N; ++j) {
