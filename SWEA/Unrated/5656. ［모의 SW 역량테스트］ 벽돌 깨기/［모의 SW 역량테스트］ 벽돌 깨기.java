@@ -22,8 +22,6 @@ public class Solution {
 	static int[] dr = { 0, 1, 0, -1 };
 	static int[] dc = { 1, 0, -1, 0 };
 
-//	static int chk = 0;
-
 	public static void main(String[] args) throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		int T = Integer.parseInt(br.readLine());
@@ -42,23 +40,14 @@ public class Solution {
 				for (int j = 0; j < W; ++j) {
 					map[i][j] = Integer.parseInt(st.nextToken());
 					if (map[i][j] > 0) {
-//						++chk;
 						++block;
 					}
 				}
 			}
 
-//			System.out.println(block);
-//			block -= bomb(2, map);
-//			block -= bomb(2, map);
-//			block -= bomb(6, map);
-//			for (int i=0; i<H; ++i) {
-//				System.out.println(Arrays.toString(map[i]));
-//			}		
 			recursive(0, map, block);
 			StringBuilder sb = new StringBuilder();
 			sb.append("#").append(t).append(" ").append(min);
-//			sb.append("#").append(t).append(" ").append(block);
 			System.out.println(sb);
 		}
 	}
@@ -70,28 +59,6 @@ public class Solution {
 		}
 
 		for (int i = 0; i < W; ++i) {
-//			int[][] tmp = null;
-//			int gap = 0;
-//			if (cnt == 0) {
-//				System.out.println(1);
-//				tmp = copyMap(inMap);
-//				gap = bomb(2, tmp);
-//			}
-//			if (cnt == 1) {
-//				System.out.println(2);
-//				tmp = copyMap(inMap);
-//				gap = bomb(2, tmp);
-//			}
-//			if (cnt == 2) {
-//				System.out.println(3);
-//				tmp = copyMap(inMap);
-//				gap = bomb(6, tmp);
-//			}
-//			for (int i=0; i<H; ++i) {
-//				System.out.println(Arrays.toString(tmp[i]));
-//			}
-//			System.out.println();
-			
 			int[][] tmp = copyMap(inMap);
 			int gap = bomb(i, tmp);			
 			recursive(cnt + 1, tmp, block - gap);
@@ -126,7 +93,6 @@ public class Solution {
 				int cnt = 1;
 				int nextR = curr.r;
 				int nextC = curr.c;
-//				while (cnt < map[curr.r][curr.c]) {
 				while (cnt < c) {
 					nextR += dr[d];
 					nextC += dc[d];
@@ -163,7 +129,6 @@ public class Solution {
 			int i = H - 1;
 			int j = H - 1;
 			while (i >= 0 && j >= 0) { // i위치가 0이고 j가 0이 아니면 j를 i로 옮긴다.
-//				System.out.println(i + " , " + j);
 				while (i >= 0 && tmp[i][k] != 0) {
 					--i;
 				}
@@ -194,8 +159,4 @@ public class Solution {
 	public static boolean isValid(int r, int c) {
 		return r >= 0 && r < H && c >= 0 && c < W;
 	}
-
-//	public static void recursive() {
-//		
-//	}
 }
