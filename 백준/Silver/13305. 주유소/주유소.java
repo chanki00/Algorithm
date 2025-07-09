@@ -1,3 +1,5 @@
+
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Arrays;
@@ -11,17 +13,17 @@ public class Main {
         br = new BufferedReader(new InputStreamReader(System.in));
 
         int N = Integer.parseInt(br.readLine());
-        int[] dist = new int[N-1];
-        int[] price = new int[N];
+        long[] dist = new long[N-1];
+        long[] price = new long[N];
 
-        int sum = input(dist);
+        long sum = input(dist);
 
         input(price);
 
-        int[] buy = new int[N];
+        long[] buy = new long[N];
         buy[0] = sum;
         int idx = 0;
-        int min = price[idx];
+        long min = price[idx];
 
         for (int i=1; i<price.length; ++i) {
             sum -= dist[i-1];
@@ -35,7 +37,7 @@ public class Main {
 
 //        System.out.println(Arrays.toString(buy));
 
-        int result = 0;
+        long result = 0;
         for (int i=0; i<buy.length; ++i) {
             result += buy[i] * price[i];
         }
@@ -44,8 +46,8 @@ public class Main {
 
     }
 
-    public static int input(int[] arr) throws Exception {
-        int sum = 0;
+    public static long input(long[] arr) throws Exception {
+        long sum = 0;
 
         st = new StringTokenizer(br.readLine());
         for (int i=0; i<arr.length; ++i) {
