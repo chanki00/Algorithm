@@ -21,22 +21,22 @@ public class Main {
             sum += arr[i];
         }
 
-
-        Map<Integer, Integer> map = new HashMap<>();
-        map.put(sum, 1);
+        int max = sum;
+        int cnt = 1;
         for (int i=0; i<N-X; ++i) {
             sum -= arr[i];
             sum += arr[i+X];
-            map.put(sum, map.getOrDefault(sum, 0)+1);
+
+            if (max < sum) {
+                max = sum;
+                cnt = 1;
+            }
+            else if (max == sum) {
+                ++cnt;
+            }
         }
 
-        int max = Integer.MIN_VALUE;
-        for (int key : map.keySet()) {
-            max = Math.max(max, key);
-        }
-        int cnt = map.get(max);
-
-        if (max <= 0) {
+        if (max == 0) {
             System.out.println("SAD");
             return;
         }
