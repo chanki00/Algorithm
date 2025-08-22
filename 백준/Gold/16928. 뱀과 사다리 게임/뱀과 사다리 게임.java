@@ -24,7 +24,7 @@ public class Main {
     }
 
     static int N, M;
-    static int[] radder, snake, dist;
+    static int[] ls, dist;
 
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -33,22 +33,20 @@ public class Main {
         N = Integer.parseInt(st.nextToken());
         M = Integer.parseInt(st.nextToken());
 
-        radder = new int[101];
-        Arrays.fill(radder, -1);
+        ls = new int[101];
+        Arrays.fill(ls, -1);
         for (int i=0; i<N; ++i) {
             st = new StringTokenizer(br.readLine());
             int s = Integer.parseInt(st.nextToken());
             int e = Integer.parseInt(st.nextToken());
-            radder[s] = e;
+            ls[s] = e;
         }
 
-        snake = new int[101];
-        Arrays.fill(snake, -1);
         for (int i=0; i<M; ++i) {
             st = new StringTokenizer(br.readLine());
             int s = Integer.parseInt(st.nextToken());
             int e = Integer.parseInt(st.nextToken());
-            snake[s] = e;
+            ls[s] = e;
         }
 
         dist = new int[101];
@@ -87,12 +85,8 @@ public class Main {
     }
 
     public static int move(int x) {
-        if (radder[x] != -1) {
-            return radder[x];
-        }
-
-        if (snake[x] != -1) {
-            return snake[x];
+        if (ls[x] != -1) {
+            return ls[x];
         }
 
         return x;
