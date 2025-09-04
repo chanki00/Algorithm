@@ -17,10 +17,8 @@ public class Main {
             sb = new StringBuilder();
             arr = new int[N];
 
-            StringBuilder exp = new StringBuilder();
             for (int i=0; i<N; ++i) {
                 arr[i] = i+1;
-//                exp.append(arr[i]);
             }
             recursive(1, 1, 1, 1, new StringBuilder().append(1));
             System.out.println(sb);
@@ -36,13 +34,8 @@ public class Main {
             return;
         }
 
-        if (exp.toString().equals("1-2")) {
-            int c = 1+2;
-        }
-
         for (int i=0; i<oper.length; ++i) {
 
-//            exp.insert(2*idx+1, oper[i]);
             exp.append(oper[i]).append(arr[idx]);
             if (i == 0) { // 공백
                 if (prev == 1) {
@@ -59,7 +52,6 @@ public class Main {
             else {
                 recursive(arr[idx], idx+1, 2, sum - arr[idx], exp);
             }
-//            exp.deleteCharAt(2*idx+1);
             exp.deleteCharAt(exp.length()-1);
             exp.deleteCharAt(exp.length()-1);
         }
