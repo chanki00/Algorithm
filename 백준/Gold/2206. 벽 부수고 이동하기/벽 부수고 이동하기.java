@@ -1,30 +1,27 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.ArrayDeque;
-import java.util.Queue;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.util.*;
 
 public class Main {
 
-    static class Point {
+    static class Node {
         int r;
         int c;
-        int isCrashed;
+        int cnt;
+        int crash;
 
-        Point() {}
-        Point(int r, int c) {
+        public Node() {}
+        public Node(int r, int c, int cnt, int crash) {
             this.r = r;
             this.c = c;
-        }
-        Point(int r, int c, int isCrashed) {
-            this.r = r;
-            this.c = c;
-            this.isCrashed = isCrashed;
+            this.cnt = cnt;
+            this.crash = crash;
         }
     }
 
-    static int N;
-    static int M;
+    static int N, M;
+    static int[][] map;
+    static int[] dr = {0, 1, 0, -1};
+    static int[] dc = {1, 0, -1, 0};
 
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -33,71 +30,52 @@ public class Main {
         N = Integer.parseInt(st.nextToken());
         M = Integer.parseInt(st.nextToken());
 
-        String[] map = new String[N];
+        map = new int[N][M];
         for (int i=0; i<N; ++i) {
-            map[i] = br.readLine();
+            String s = br.readLine();
+            for (int j=0; j<M; ++j) {
+                map[i][j] = s.charAt(j) - '0';
+            }
         }
 
-        boolean[][][] visited = new boolean[2][N][M];
-
-        int min = bfs(0, 0, map, visited);
-
-        System.out.println(min);
+        System.out.println(bfs());
     }
 
-    public static int bfs(int r, int c, String[] map, boolean[][][] visited) {
-
-        Queue<Point> q = new ArrayDeque<>();
-        q.add(new Point(r, c));
-        visited[0][r][c] = true;
-
-        int[] rd = {0, 1, 0, -1};
-        int[] cd = {1, 0, -1, 0};
-
-        int count = q.size();
-        int min = 1;
+    public static int bfs() {
+        Queue<Node> q = new ArrayDeque<>();
+        q.add(new Node(0, 0, 1, 0));
+        boolean[][][] visited = new boolean[2][N][M];
 
         while (!q.isEmpty()) {
-            if (count == 0) {
-                ++min;
-                count = q.size();
-            }
+            Node curr = q.poll();
 
-            Point curr = q.poll();
             if (curr.r == N-1 && curr.c == M-1) {
-                return min;
+                return curr.cnt;
             }
 
-            for (int i=0; i<4; ++i) {
-                int nextR = curr.r + rd[i];
-                int nextC = curr.c + cd[i];
-                Point next = new Point(nextR, nextC, curr.isCrashed);
-                if (isValid(nextR, nextC)) {
-                    if (!visited[curr.isCrashed][nextR][nextC]) {
-                        if (curr.isCrashed == 0) {
-                            if (map[nextR].charAt(nextC) == '1') {
-                                next.isCrashed = 1;
-                            }
-                            visited[next.isCrashed][nextR][nextC] = true;
-                            q.offer(next);
+            for (int d=0; d<4; ++d) {
+                int nextR = curr.r + dr[d];
+                int nextC = curr.c + dc[d];
+
+                if (isValid(nextR, nextC) && !visited[curr.crash][nextR][nextC]) {
+                    if (map[nextR][nextC] == 1) {
+                        if (curr.crash == 0) {
+                            q.add(new Node(nextR, nextC, curr.cnt+1, 1));
+                            visited[1][nextR][nextC] = true;
                         }
-                        else {
-                            if (map[nextR].charAt(nextC) == '0') {
-                                visited[next.isCrashed][nextR][nextC] = true;
-                                q.offer(next);
-                            }
-                        }
+                    }
+                    else {
+                        q.add(new Node(nextR, nextC, curr.cnt+1, curr.crash));
+                        visited[curr.crash][nextR][nextC] = true;
                     }
                 }
             }
-
-            --count;
         }
 
         return -1;
     }
 
     public static boolean isValid(int r, int c) {
-        return r >= 0 && r < N && c >= 0 &&  c < M;
+        return r >= 0 && r < N && c >= 0 && c < M;
     }
 }
