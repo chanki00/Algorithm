@@ -3,19 +3,6 @@ import java.util.*;
 
 public class Main {
 
-    static class Node {
-        int r;
-        int c;
-        int v;
-
-        public Node() {}
-        public Node(int r, int c, int v) {
-            this.r = r;
-            this.c = c;
-            this.v = v;
-        }
-    }
-
     static int N, M;
     static int[][] map;
     static int[] dr = {0, 1, 0};
