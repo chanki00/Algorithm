@@ -1,31 +1,24 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.util.*;
 
 public class Main {
-	public static void main(String[] args) throws Exception {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		int T = Integer.parseInt(br.readLine());
-		for (int t = 1; t <= T; ++t) {
-			int N = Integer.parseInt(br.readLine());
-			int[] memo = new int[N + 1];
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int T = Integer.parseInt(br.readLine());
+        for (int t=0; t<T; ++t) {
+            int N = Integer.parseInt(br.readLine());
+            int[] dp = new int[N+1];
+            dp[0] = 1;
+            for (int i=1; i<=N; ++i) {
+                for (int j=1; j<=3; ++j) {
+                    if (i-j >= 0) {
+                        dp[i] += dp[i-j];
+                    }
+                }
+            }
 
-			memo[0] = 1;
-			memo[1] = 1;
-			// memo[2] = 2;
-			// memo[3] = 4;
-			for (int i = 2; i <= N; ++i) {
-				if (i >= 2) {
-					memo[i] += memo[i - 2];
-				}
+            System.out.println(dp[N]);
 
-				if (i >= 3) {
-					memo[i] += memo[i - 3];
-				}
-
-				memo[i] += memo[i - 1];
-			}
-
-			System.out.println(memo[N]);
-		}
-	}
+        }
+    }
 }
