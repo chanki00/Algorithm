@@ -89,8 +89,8 @@ public class Main {
         for (int i=0; i<size; ++i) {
             Cloud curr = q.poll();
 
-            curr.r = (N*50 + curr.r + dr[d]*s - 1) % N + 1;
-            curr.c = (N*50 + curr.c + dc[d]*s - 1) % N + 1;
+            curr.r = ((curr.r + dr[d]*s - 1) % N + N) % N+ 1;
+            curr.c = ((curr.c + dc[d]*s - 1) % N + N) % N+ 1;
 
             q.add(curr);
         }
