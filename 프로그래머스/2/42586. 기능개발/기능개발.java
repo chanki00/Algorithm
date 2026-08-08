@@ -1,43 +1,29 @@
 import java.io.*;
 import java.util.*;
 
-/*
-- 진도가 100%이면 반영
-- 뒤에 있는 애는 앞에 애 배포할 때 같이 배포
-*/
-
 class Solution {
-    public int[] solution(int[] progresses, int[] speeds) {
-        int[] answer;
+    public List<Integer> solution(int[] progresses, int[] speeds) {
+        List<Integer> answer = new ArrayList<>();
         
-        List<Integer> list = new ArrayList<>();
-        int cnt = 0;
         int idx = 0;
-        while (cnt < progresses.length) {
-            int currCnt = 0;
-            int mul = (int) Math.ceil((100 - progresses[idx]) / (double) speeds[idx]);
-            
+        int total = 0;
+        while (idx < progresses.length) {
+            int n = (int) Math.ceil((100 - progresses[idx]) / (double) speeds[idx]);
+            int cnt = 0;
             for (int i=idx; i<progresses.length; ++i) {
-                int nextVal = progresses[i] + speeds[i] * mul;
-                progresses[i] = nextVal >= 100 ? 100 : nextVal;
-            }
-            
-            for (int i=idx; i<progresses.length; ++i) {
-                if (progresses[i] < 100) {
-                    idx = i;
+                if (progresses[i] + speeds[i]*n >= 100) {
+                    ++cnt;
+                }
+                else {
                     break;
                 }
-                ++currCnt;
             }
-
-            list.add(currCnt);
-            cnt += currCnt;
+            
+            answer.add(cnt);
+            idx += cnt;
         }
         
-        answer = new int[list.size()];
-        for (int i=0; i<list.size(); ++i) {
-            answer[i] = list.get(i);
-        }
+        
         
         return answer;
     }
