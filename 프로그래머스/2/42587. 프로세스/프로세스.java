@@ -1,46 +1,43 @@
+import java.io.*;
 import java.util.*;
 
 class Solution {
     
     class Process {
         int idx;
-        int p;
+        int priority;
         
-        Process(int idx, int p) {
+        public Process() {}
+        public Process(int idx, int priority) {
             this.idx = idx;
-            this.p = p;
+            this.priority = priority;
         }
     }
     
     public int solution(int[] priorities, int location) {
         int answer = 0;
         
+        Queue<Integer> pq = new PriorityQueue<>((o1, o2) -> Integer.compare(o2, o1));
         Queue<Process> q = new ArrayDeque<>();
-        int[] arr = new int[10];
         for (int i=0; i<priorities.length; ++i) {
             q.add(new Process(i, priorities[i]));
-            for (int j=1; j<priorities[i]; ++j) {
-                ++arr[j];
-            }
+            pq.add(priorities[i]);
         }
         
         while (!q.isEmpty()) {
             Process curr = q.poll();
-            
-            if (arr[curr.p] > 0) {
+            if (curr.priority == pq.peek()) {
+                pq.poll();
+                ++answer;
+                if (curr.idx == location) {
+                    break;
+                }
+            }
+            else {
                 q.add(curr);
-                continue;
-            }
-            
-            ++answer;
-            if (curr.idx == location) {
-                break;
-            }
-            
-            for (int i=1; i<curr.p; ++i) {
-                --arr[i];
             }
         }
+        
         
         return answer;
     }
