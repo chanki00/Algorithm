@@ -1,22 +1,21 @@
-import java.util.*;
 import java.io.*;
+import java.util.*;
 
 class Solution {
     public int[] solution(int[] prices) {
         int[] answer = new int[prices.length];
         
         for (int i=0; i<prices.length-1; ++i) {
-            ++answer[i];
             for (int j=i+1; j<prices.length; ++j) {
+                ++answer[i];
                 if (prices[i] > prices[j]) {
                     break;
                 }
-                ++answer[i];
-                if (j == prices.length-1) {
-                    --answer[i];
-                }
             }
         }
+        
+        answer[prices.length-1] = 0;
+        
         
         return answer;
     }
