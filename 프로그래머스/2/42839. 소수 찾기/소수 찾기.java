@@ -1,3 +1,4 @@
+import java.io.*;
 import java.util.*;
 
 class Solution {
@@ -6,17 +7,6 @@ class Solution {
     
     public int solution(String numbers) {
         int answer = 0;
-        
-        // StringBuilder sb = new StringBuilder();
-        // sb.append("1");
-        // sb.append("1");
-        // sb.append("1");
-        // sb.append("1");
-        // sb.append("1");
-        // sb.append("1");
-        // sb.append("1");
-        // sb.delete(sb.length()-1, sb.length());
-        // System.out.println(sb.length());
         
         for (int i=1; i<=numbers.length(); ++i) {
             recur(numbers, new boolean[numbers.length()], 0, new StringBuilder(), i);
@@ -50,17 +40,6 @@ class Solution {
                 sb.delete(sb.length()-1, sb.length());
             }
         }
-        
-        
-        
-//         used[idx] = false;
-//         recur(numbers, idx+1, used, sb);
-        
-//         used[idx] = true;
-//         sb.append(numbers.charAt(idx));
-//         recur(numbers, idx+1, used, sb);
-        // sb.delete(sb.length()-1, sb.length());
-        
     }
     
     public boolean isPrime(int num) {
