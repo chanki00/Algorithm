@@ -1,3 +1,4 @@
+import java.io.*;
 import java.util.*;
 
 /*
@@ -57,8 +58,6 @@ AAAE는 3 + 1 + 5*1개 다음 (x, A~U)
 AAA 에 대해서 1 + 5 * 6 *(인덱스)개 (x + A~U * AAAA에 대한 개수)
 AA 에 대해서 1 + 5 * 31개
 A에 대해서 1 + 5 * 156개
-
-
 
 */
 
