@@ -14,36 +14,21 @@ class Solution {
     public int solution(int k, int[][] dungeons) {
         int answer = -1;
         v = new boolean[dungeons.length];
-        recursive(dungeons, new int[dungeons.length], 0, k);
+        recursive(dungeons, 0, k);
         answer = max;
         
         return answer;
     }
     
-    public void recursive(int[][] dungeons, int[] sel, int idx, int stamina) {        
-        if (idx == dungeons.length) {
-            chk(dungeons, sel, stamina);
-            return;
-        }
-        
+    public void recursive(int[][] dungeons, int idx, int stamina) {                
         for (int i=0; i<dungeons.length; ++i) {
-            if (!v[i]) {
+            if (!v[i] && stamina >= dungeons[i][0]) {
                 v[i] = true;
-                sel[idx] = i;
-                recursive(dungeons, sel, idx+1, stamina);
+                recursive(dungeons, idx+1, stamina-dungeons[i][1]);
                 v[i] = false;
             }
         }
-    }
-    
-    public void chk(int[][] dungeons, int[] sel, int stamina) {
-        int count = 0;
-        for (int i=0; i<dungeons.length; ++i) {
-            if (stamina >= dungeons[sel[i]][0]) {
-                ++count;
-                stamina -= dungeons[sel[i]][1];
-            }
-        }
-        max = Math.max(max, count);
+        
+        max = Math.max(max, idx);
     }
 }
